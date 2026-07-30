@@ -1,0 +1,117 @@
+cat << 'EOF' > README.md
+Product of Array Except Self
+
+Problem Description
+Given an integer array nums, return an array answer such that answer[i] is equal to the product of all the elements of nums except nums[i].
+The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+You must write an algorithm that runs in O(n) time and without using the division operation.
+
+Example 1:
+Input: nums = [1,2,3,4]
+Output: [24,12,8,6]
+
+Example 2:
+Input: nums = [-1,1,0,-3,3]
+Output: [0,0,9,0,0]
+
+---
+
+1. Intuition
+
+The core requirement of this problem is to calculate the total product of the array excluding the current element, without using the division operator.
+
+For any given index i, the required product can be split into two parts:
+1. Prefix Product: The product of all numbers to the left of index i.
+2. Suffix Product: The product of all numbers to the right of index i.
+
+answer[i] = Prefix Product[i] * Suffix Product[i]
+
+Instead of using extra arrays O(n) space to store left and right products separately, we can store the prefix products directly inside the result array ans, and then accumulate the suffix product dynamically on the fly using a single integer variable (rightProduct) in a reverse pass. This brings our auxiliary space complexity down to O(1).
+
+---
+
+2. Approach
+
+To ensure clean, modular, and reusable code, the execution is split into two modular helper methods:
+
+1. Prefix Pass (fillPrefixProducts):
+   Initialize ans[0] = 1 because there are no elements to the left of the first element.
+   Traverse forward from index 1 to n - 1.
+   For each index i, store ans[i] = ans[i - 1] * nums[i - 1].
+
+2. Suffix Pass (applySuffixProducts):
+   Maintain a variable rightProduct initialized to 1.
+   Traverse backward from index n - 1 down to 0.
+   Multiply ans[i] by rightProduct.
+   Update rightProduct *= nums[i] for the next element to the left.
+
+Complexity Analysis:
+Time Complexity: O(n)
+We perform exactly two linear passes through the array of length n.
+Space Complexity: O(1) Auxiliary Space
+The problem statement explicitly mentions that the output array does not count as extra space for the purpose of space complexity analysis. We only use a single integer variable (rightProduct) to track running state.
+
+---
+
+3. Code (Clean & Modular C++)
+
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class Solution {
+private:
+    // Computes prefix products (products of all elements to the left) 
+    // and stores them into the answer array.
+    void fillPrefixProducts(vector<int>& ans, const vector<int>& nums) {
+        int n = nums.size();
+        for (int i = 1; i < n; i++) {
+            ans[i] = ans[i - 1] * nums[i - 1];
+        }
+    }
+
+    // Computes suffix products (products of all elements to the right) 
+    // on the fly and multiplies them with existing prefix products in ans.
+    void applySuffixProducts(vector<int>& ans, const vector<int>& nums) {
+        int n = nums.size();
+        int rightProduct = 1;
+        for (int i = n - 1; i >= 0; i--) {
+            ans[i] *= rightProduct;
+            rightProduct *= nums[i];
+        }
+    }
+
+public:
+    // Main function to compute product of array except self.
+    vector<int> productExceptSelf(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> ans(n, 1);
+        
+        // Pass 1: Compute Left (Prefix) Products
+        fillPrefixProducts(ans, nums);
+        
+        // Pass 2: Compute Right (Suffix) Products and Combine
+        applySuffixProducts(ans, nums);
+        
+        return ans;
+    }
+};
+
+// Driver Code for Local Verification
+int main() {
+    Solution solver;
+    vector<int> nums = {1, 2, 3, 4};
+    
+    vector<int> result = solver.productExceptSelf(nums);
+    
+    cout << "Input:  [1, 2, 3, 4]" << endl;
+    cout << "Output: [";
+    for (size_t i = 0; i < result.size(); i++) {
+        cout << result[i] << (i + 1 < result.size() ? ", " : "");
+    }
+    cout << "]" << endl;
+
+    return 0;
+}
