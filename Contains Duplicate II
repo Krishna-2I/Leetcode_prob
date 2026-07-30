@@ -1,0 +1,93 @@
+Contains Duplicate II
+
+Problem Description
+Given an integer array nums and an integer k, return true if there are two distinct indices i and j in the array such that nums[i] == nums[j] and abs(i - j) <= k.
+
+Example 1:
+Input: nums = [1,2,3,1], k = 3
+Output: true
+
+Example 2:
+Input: nums = [1,0,1,1], k = 1
+Output: true
+
+Example 3:
+Input: nums = [1,2,3,1,2,3], k = 2
+Output: false
+
+---
+
+1. Intuition
+
+We need to check if any duplicate value exists within a sliding window of size k.
+
+When traversing through the array, if we encounter a number that we have seen before, we calculate the difference between the current index and the previously seen index. If this difference is less than or equal to k, we return true immediately. 
+
+Using an unordered_map allows us to store each number alongside its most recent index, giving us constant-time lookups to check previous occurrences.
+
+---
+
+2. Approach
+
+To keep the code clean and modular, the check is separated into a dedicated helper function:
+
+1. Map-Based Sliding Check (checkNearbyDuplicate):
+   Initialize an unordered_map to store the value and its latest index.
+   Traverse through the array from index 0 to n - 1.
+   For each element:
+   Check if the element already exists in the map and if (current_index - previous_index) <= k.
+   If both conditions are met, return true.
+   Otherwise, update the map with the current element's latest index.
+   If the loop finishes without finding a valid pair, return false.
+
+Complexity Analysis:
+Time Complexity: O(n)
+We iterate through the array once, performing average O(1) lookups and insertions in the hash map.
+Space Complexity: O(n) Auxiliary Space
+In the worst case, we store up to n elements in the hash map.
+
+---
+
+3. Code (Clean & Modular C++)
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+class Solution {
+private:
+    // Helper function to check if duplicate exists within distance k
+    bool checkNearbyDuplicate(const vector<int>& nums, int k) {
+        unordered_map<int, int> mp;
+        for (int i = 0; i < nums.size(); i++) {
+            if (mp.count(nums[i]) && i - mp[nums[i]] <= k) {
+                return true;
+            }
+            mp[nums[i]] = i;
+        }
+        return false;
+    }
+
+public:
+    // Main function to check for nearby duplicate
+    bool containsNearbyDuplicate(vector<int>& nums, int k) {
+        return checkNearbyDuplicate(nums, k);
+    }
+};
+
+// Driver Code for Local Verification
+int main() {
+    Solution solver;
+    vector<int> nums = {1, 2, 3, 1};
+    int k = 3;
+    
+    bool result = solver.containsNearbyDuplicate(nums, k);
+    
+    cout << "Input: nums = [1, 2, 3, 1], k = 3" << endl;
+    cout << "Output: " << (result ? "true" : "false") << endl;
+
+    return 0;
+}
