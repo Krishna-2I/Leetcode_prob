@@ -1,0 +1,105 @@
+Subarray Sum Equals K
+
+Problem Description
+Given an array of integers nums and an integer k, return the total number of subarrays whose sum equals to k.
+A subarray is a contiguous non-empty sequence of elements within an array.
+
+Example 1:
+Input: nums = [1,1,1], k = 2
+Output: 2
+
+Example 2:
+Input: nums = [1,2,3], k = 3
+Output: 2
+
+---
+
+1. Intuition
+
+To find the sum of any contiguous subarray, we can use prefix sums. The sum of a subarray between index i and j is given by prefixSum[j] - prefixSum[i - 1].
+
+If a subarray ending at index j has a sum equal to k, then:
+currentSum - previousPrefixSum = k
+Which rearranges to:
+previousPrefixSum = currentSum - k
+
+Instead of checking all previous prefix sums repeatedly, we can maintain a hash map storing the frequency of each prefix sum seen so far. As we iterate through the array, we check if (currentSum - k) exists in our map. If it does, we add its frequency to our count.
+
+---
+
+2. Approach
+
+To ensure clean, modular, and reusable code, the logic is encapsulated in a dedicated helper function:
+
+1. Prefix Sum Map Check (countSubarraysWithSum):
+   Initialize an unordered_map to store the frequency of prefix sums.
+   Base Case: Set prefixSumCount[0] = 1 to account for subarrays starting at index 0 that sum directly to k.
+   Maintain a running variable currentSum = 0 and count = 0.
+   Traverse through the array:
+   Add current element to currentSum.
+   Check if (currentSum - k) exists in prefixSumCount. If found, add its count to the total count.
+   Increment the occurrence of currentSum in prefixSumCount.
+   Return count.
+
+Complexity Analysis:
+Time Complexity: O(n)
+We iterate through the array once, performing average O(1) hash map operations at each step.
+Space Complexity: O(n) Auxiliary Space
+In the worst case, all prefix sums are distinct, requiring us to store up to n entries in the hash map.
+
+---
+
+3. Code (Clean & Modular C++)
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+using namespace std;
+
+class Solution {
+private:
+    // Helper function to count subarrays whose sum equals k
+    int countSubarraysWithSum(const vector<int>& nums, int k) {
+        unordered_map<int, int> prefixSumCount;
+        prefixSumCount[0] = 1; // Base case for subarrays starting from index 0
+        
+        int currentSum = 0;
+        int count = 0;
+        
+        for (int num : nums) {
+            currentSum += num;
+            
+            // Check if there is a prefix sum such that currentSum - prefixSum = k
+            if (prefixSumCount.find(currentSum - k) != prefixSumCount.end()) {
+                count += prefixSumCount[currentSum - k];
+            }
+            
+            // Store/update frequency of the current prefix sum
+            prefixSumCount[currentSum]++;
+        }
+        
+        return count;
+    }
+
+public:
+    // Main function to return number of subarrays with sum equal to k
+    int subarraySum(vector<int>& nums, int k) {
+        return countSubarraysWithSum(nums, k);
+    }
+};
+
+// Driver Code for Local Verification
+int main() {
+    Solution solver;
+    vector<int> nums = {1, 1, 1};
+    int k = 2;
+    
+    int result = solver.subarraySum(nums, k);
+    
+    cout << "Input: nums = [1, 1, 1], k = 2" << endl;
+    cout << "Output: " << result << endl;
+
+    return 0;
+}
