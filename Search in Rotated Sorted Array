@@ -1,0 +1,112 @@
+Search in Rotated Sorted Array
+
+Problem Description
+Given the array nums after the possible rotation and an integer target, return the index of target if it is in nums, or -1 if it is not in nums.
+You must write an algorithm with O(log n) runtime complexity.
+
+Example 1:
+Input: nums = [4,5,6,7,0,1,2], target = 0
+Output: 4
+
+Example 2:
+Input: nums = [4,5,6,7,0,1,2], target = 3
+Output: -1
+
+Example 3:
+Input: nums = [1], target = 0
+Output: -1
+
+---
+
+1. Intuition
+
+Although the array is rotated, dividing it in half will always leave at least one side (left or right) sorted.
+
+We can apply a modified binary search. At each middle index, we check which half is sorted. If the left half is sorted, we check if the target lies within the range of that sorted left half. If it does, we narrow our search to the left; otherwise, we search the right. If the right half is sorted, we apply the same boundary check on the right half.
+
+This allows us to eliminate half of the remaining elements at each step, maintaining the optimal logarithmic runtime.
+
+---
+
+2. Approach
+
+To keep the code clean and modular, the binary search logic is encapsulated in a dedicated helper function:
+
+1. Modified Binary Search (binarySearchRotated):
+   Initialize two pointers, left = 0 and right = n - 1.
+   Loop while left <= right:
+   Calculate mid = left + (right - left) / 2.
+   If nums[mid] == target, return mid.
+   Determine which half is sorted:
+   If nums[left] <= nums[mid], the left half is sorted.
+   Check if target lies in [nums[left], nums[mid]). If so, update right = mid - 1; otherwise, left = mid + 1.
+   Otherwise, the right half must be sorted.
+   Check if target lies in (nums[mid], nums[right]]. If so, update left = mid + 1; otherwise, right = mid - 1.
+   If the target is not found, return -1.
+
+Complexity Analysis:
+Time Complexity: O(log n)
+In each iteration, we halve the search space using binary search principles.
+Space Complexity: O(1) Auxiliary Space
+We only use a few variables (left, right, mid) to track indices, using no extra memory.
+
+---
+
+3. Code (Clean & Modular C++)
+
+```cpp
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+class Solution {
+private:
+    // Helper function to perform binary search on rotated sorted array
+    int binarySearchRotated(const vector<int>& nums, int target) {
+        int l = 0, r = nums.size() - 1;
+        while (l <= r) {
+            int m = l + (r - l) / 2;
+            
+            if (nums[m] == target) return m;
+            
+            // Check if left half is sorted
+            if (nums[l] <= nums[m]) {
+                if (target >= nums[l] && target < nums[m]) {
+                    r = m - 1; // Target lies in sorted left half
+                } else {
+                    l = m + 1; // Target lies in right half
+                }
+            } 
+            // Otherwise, right half is sorted
+            else {
+                if (target > nums[m] && target <= nums[r]) {
+                    l = m + 1; // Target lies in sorted right half
+                } else {
+                    r = m - 1; // Target lies in left half
+                }
+            }
+        }
+        return -1;
+    }
+
+public:
+    // Main function to search target in rotated sorted array
+    int search(vector<int>& nums, int target) {
+        return binarySearchRotated(nums, target);
+    }
+};
+
+// Driver Code for Local Verification
+int main() {
+    Solution solver;
+    vector<int> nums = {4, 5, 6, 7, 0, 1, 2};
+    int target = 0;
+    
+    int result = solver.search(nums, target);
+    
+    cout << "Input: nums = [4, 5, 6, 7, 0, 1, 2], target = 0" << endl;
+    cout << "Output: " << result << endl;
+
+    return 0;
+}
