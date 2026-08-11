@@ -1,7 +1,7 @@
 Minimum Size Subarray Sum
 
 Problem Description
-Given an array of positive integers nums and a positive integer target, return the minimal length of a subarray whose sum is greater than or equal to target. If there is no such subarray, return $0$ instead.
+Given an array of positive integers nums and a positive integer target, return the minimal length of a subarray whose sum is greater than or equal to target. If there is no such subarray, return 0 instead.
 
 Example 1:
 Input: target = 7, nums = [2,3,1,2,4,3]
@@ -26,7 +26,7 @@ Approach
 
 Sliding Window Technique:
 Initialize a left pointer l = 0, a variable sum = 0 to track the current window sum, and len = INT_MAX to store the minimum length found.
-Expand the window using a right pointer r from $0$ to $n - 1$, adding nums[r] to sum.
+Expand the window using a right pointer r from 0 to n - 1, adding nums[r] to sum.
 While sum >= target:
 
 Update len with min(len, r - l + 1).
@@ -35,9 +35,9 @@ Subtract nums[l] from sum and increment l to shrink the window.
 After processing all elements, if len is still INT_MAX, return $0$. Otherwise, return len.
 
 Complexity Analysis:
-Time Complexity: $O(n)$
+Time Complexity: O(n)
 Each element is processed at most twice (once by the right pointer and once by the left pointer).
-Space Complexity: $O(1)$ Auxiliary Space
+Space Complexity: O(1) Auxiliary Space
 Uses a few integer variables, keeping memory usage constant.
 
 Code (Clean & Modular C++)
