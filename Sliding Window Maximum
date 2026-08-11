@@ -1,0 +1,70 @@
+Sliding Window Maximum
+
+Problem Description
+Given an array of integers nums and an integer k, there is a sliding window of size k moving from left to right. Return the maximum element in each sliding window position.
+
+Example 1:
+Input: nums = [1,3,-1,-3,5,3,6,7], k = 3
+Output: [3,3,5,5,6,7]
+
+Example 2:
+Input: nums = [1], k = 1
+Output: [1]
+
+Intuition
+
+Finding the maximum in each window naively takes O(k) per step, leading to O(n \cdot k) total time, which easily exceeds time limits for large inputs.
+
+We can optimize this to O(n) using a monotonic deque (double-ended queue) that stores indices in decreasing order of their corresponding values. The front of the deque will always hold the index of the maximum value in the current window.
+
+As we traverse the array:
+
+Pop from the front if the index is out of the window boundary (i - k).
+
+Pop from the back if the value at that index is less than or equal to the current element a[i], since it can no longer be the maximum.
+
+Push the current index to the back.
+
+Record a[q.\text{front()}] into our result array once the window reaches size k.
+
+Approach
+
+Monotonic Deque Maintenance:
+Initialize a deque to store element indices and a vector res for the window maximums.
+Iterate through array a with index i from 0 to n - 1:
+
+If q is not empty and q.\text{front}() == i - k, remove the front index as it has slipped out of the window.
+
+While $q$ is not empty and a[q.\text{back}()] \le a[i], pop from the back to maintain a monotonically decreasing queue.
+
+Push index $i$ to the back of q
+
+Once i \ge k - 1, append a[q.\text{front}()] to res.
+
+Complexity Analysis:
+Time Complexity: O(n)
+Every element is added to and removed from the deque at most once across the entire loop.
+Space Complexity: O(k) Auxiliary Space
+The deque stores at most k indices at any given point.
+
+Code (Clean & Modular C++)
+
+#include <vector>
+#include <deque>
+
+using namespace std;
+
+class Solution {
+public:
+    vector<int> maxSlidingWindow(vector<int>& a, int k) {
+        deque<int> q;
+        vector<int> res;
+        for (int i = 0; i < a.size(); ++i) {
+            if (!q.empty() && q.front() == i - k) q.pop_front();
+            while (!q.empty() && a[q.back()] <= a[i]) q.pop_back();
+            q.push_back(i);
+            if (i >= k - 1) res.push_back(a[q.front()]);
+        }
+        return res;
+    }
+};
