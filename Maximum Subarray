@@ -1,0 +1,45 @@
+Maximum Subarray
+
+Intuition
+
+The core idea behind Kadane's Algorithm is to make local optimal decisions at each step that lead to a global optimal solution. As we iterate through the array, we ask a simple question for each element: Is it better to extend the existing contiguous subarray sum, or is it better to start a fresh subarray from the current element? If the sum accumulated so far becomes negative, continuing to add elements to it will only reduce the sum of any future subarray. Therefore, whenever the current running sum drops below the value of the current element itself, we discard the previous running total and start new with the current element.
+
+Approach
+
+Initialize two variables, max_sum and current_sum, with the value of the first element in the array.
+
+Iterate through the array starting from the second element (index 1).
+
+At each index, update current_sum by taking the maximum between the current element alone and the sum of the current element and current_sum.
+
+Update max_sum by taking the maximum between the existing max_sum and the newly updated current_sum.
+
+After completing the loop through the array, return max_sum as the final result.
+
+Code
+
+class Solution {
+public:
+int maxSubArray(vector& nums) {
+int max_sum = nums[0], current_sum = nums[0];
+for (size_t i = 1; i < nums.size(); ++i) {
+current_sum = max(nums[i], current_sum + nums[i]);
+max_sum = max(max_sum, current_sum);
+}
+return max_sum;
+}
+};
+
+Time Complexity
+
+O(N), where N is the length of the input array. The algorithm visits each element in the array exactly once in a single linear pass.
+
+Space Complexity
+
+O(1), as the algorithm only uses a constant amount of extra space for tracking variables without allocating any additional memory structures.
+
+Why the optimal solution is better than the brute-force approach
+
+The brute-force approach to this problem involves checking all possible contiguous subarrays using nested loops, which requires O(N^2) time complexity (or O(N^3) if computing each subarray sum explicitly). For larger arrays, such an increase in operations leads to Time Limit Exceeded errors.
+
+Kadane's algorithm reduces the problem to linear time O(N) by recognizing that we do not need to re-evaluate past subarrays once we determine that their cumulative sum actively harms the maximum potential sum of subsequent subarrays. By maintaining and updating the running sum dynamically in a single traversal, it achieves optimal execution speed with minimal space overhead.
