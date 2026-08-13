@@ -1,0 +1,38 @@
+Root Equals Sum of Children
+
+Intuition
+
+The problem guarantees that the input tree consists of exactly three nodes: a root node, a left child, and a right child. Because the structural constraints are strictly fixed, there is no need for tree traversals, recursion, or auxiliary data structures. We simply need to access the integer value stored in the root node and check whether it is numerically equal to the sum of the values stored in its left and right children.
+
+Approach
+
+Access the value of the root node using root->val.
+
+Access the values of the left and right child nodes using root->left->val and root->right->val.
+
+Add the values of the left and right children together.
+
+Compare root->val with the computed sum using the equality operator (==).
+
+Return true if they are equal, and false otherwise.
+
+Code
+
+class Solution {
+public:
+bool checkTree(TreeNode* root) {
+return root->val == root->left->val + root->right->val;
+}
+};
+
+Time Complexity
+
+O(1), as the problem requires a fixed set of basic arithmetic and pointer access operations regardless of any input size.
+
+Space Complexity
+
+O(1), as no extra memory or call stack frames are utilized.
+
+Why the optimal solution is better than the brute-force approach
+
+A traditional tree traversal method (such as depth-first search or breadth-first search) would introduce overhead by managing recursive call stacks or queues to visit nodes. Given that the input size is strictly constrained to 3 nodes, using complex traversal techniques or general-purpose tree checking algorithms creates unnecessary operations. Direct direct pointer access and single-line equality evaluation achieves the theoretical maximum efficiency in both time and space.
