@@ -1,0 +1,51 @@
+Maximum Product Subarray
+
+Intuition
+
+When finding the contiguous subarray with the largest product, multiplication introduces a critical dynamic: multiplying two negative numbers results in a positive number. This means a very small negative product can instantly become the maximum positive product if multiplied by another negative value. Therefore, we must maintain both the maximum product and the minimum product ending at the current index. Whenever we encounter a negative number, the minimum and maximum products swap roles because multiplying a negative number by the current minimum yields the new potential maximum.
+
+Approach
+
+Initialize three tracking variables—res, max_p, and min_p—to the value of the first element in the array (nums[0]).
+
+Loop through the array starting from the second element (index 1).
+
+If the current element nums[i] is negative, swap max_p and min_p because a negative multiplier flips the smallest negative product into the largest positive product.
+
+Update max_p to be the maximum of nums[i] alone and max_p * nums[i].
+
+Update min_p to be the minimum of nums[i] alone and min_p * nums[i].
+
+Update res to store the maximum product encountered so far between res and max_p.
+
+Return res after iterating through the entire array.
+
+Code
+
+class Solution {
+public:
+int maxProduct(vector& nums) {
+int res = nums[0], max_p = nums[0], min_p = nums[0];
+for (size_t i = 1; i < nums.size(); ++i) {
+if (nums[i] < 0) swap(max_p, min_p);
+max_p = max(nums[i], max_p * nums[i]);
+min_p = min(nums[i], min_p * nums[i]);
+res = max(res, max_p);
+}
+return res;
+}
+};
+
+Time Complexity
+
+O(N), where N is the number of elements in the array. The algorithm traverses the input array in a single linear pass.
+
+Space Complexity
+
+O(1), as the solution uses constant extra space for state tracking variables (res, max_p, and min_p) without allocating any additional memory structures.
+
+Why the optimal solution is better than the brute-force approach
+
+A brute-force approach checks every contiguous subarray by evaluating all possible starting and ending index combinations using nested loops, which requires O(N^2) time complexity (or O(N^3) if calculating subarray products explicitly without cumulative multiplication). For larger input arrays, this leads to a massive execution overhead and results in Time Limit Exceeded errors.
+
+The optimal dynamic programming approach achieves O(N) linear time complexity by tracking both the minimum and maximum running products dynamically in a single traversal. By leveraging mathematical properties of negative multiplication, it eliminates unnecessary computations and solves the problem using minimal auxiliary space.
