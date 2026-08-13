@@ -1,0 +1,56 @@
+Maximum Sum Circular Subarray
+
+Intuition
+
+In a circular array, a subarray can either be standard (non-wrapping) or circular (wrapping around the end back to the start). A standard max subarray can be found using normal Kadane's algorithm. For a circular max subarray, the wrapping array takes elements from both ends and leaves out a contiguous subarray in the middle. Consequently, maximizing the wrapping sum is equivalent to subtracting the minimum contiguous subarray sum from the total sum of the entire array (totalSum - minSum). The maximum possible subarray sum will then be the maximum of the non-wrapping max sum and the circular wrapping sum, with a special edge case where all numbers are negative (in which case totalSum - minSum equals 0 and leaves an empty subarray, so we must return maxSum).
+
+Approach
+
+Initialize totalSum to 0. Initialize maxSum and minSum to the first element (nums[0]), and running counters curMax and curMin to 0.
+
+Traverse through each element x in the array.
+
+Update curMax using standard Kadane's algorithm logic: max(curMax + x, x), and update maxSum to hold the global maximum found.
+
+Update curMin similarly to find the minimum subarray sum: min(curMin + x, x), and update minSum to hold the global minimum found.
+
+Accumulate x into totalSum during the traversal.
+
+Check if maxSum is greater than 0. If it is positive, return the maximum between maxSum (non-wrapping case) and totalSum - minSum (wrapping case). If maxSum is non-positive (meaning all numbers in the array are negative), return maxSum directly to avoid picking an empty subarray.
+
+Code
+
+class Solution {
+public:
+int maxSubarraySumCircular(vector& nums) {
+int totalSum = 0;
+int maxSum = nums[0], curMax = 0;
+int minSum = nums[0], curMin = 0;
+
+    for (int x : nums) {
+        curMax = max(curMax + x, x);
+        maxSum = max(maxSum, curMax);
+
+        curMin = min(curMin + x, x);
+        minSum = min(minSum, curMin);
+
+        totalSum += x;
+    }
+
+    return maxSum > 0 ? max(maxSum, totalSum - minSum) : maxSum;
+}
+};
+
+Time Complexity
+
+O(N), where N is the number of elements in the array. The algorithm processes all elements in a single pass.
+
+Space Complexity
+
+O(1), as the solution only uses a fixed number of scalar variables (totalSum, maxSum, curMax, minSum, curMin) and requires no extra dynamic memory allocation.
+
+Why the optimal solution is better than the brute-force approach
+
+A brute-force approach would consider all possible circular subarrays by iterating over every starting index and expanding up to N elements using modulo arithmetic, which leads to O(N^2) time complexity. For larger inputs, evaluating all N^2 subarrays results in a severe performance penalty and triggers Time Limit Exceeded errors.
+
+The optimal approach applies Kadane's algorithm in a dual manner—simultaneously computing the maximum non-wrapping sum and the minimum inner sum—to compute both standard and circular candidates in a single O(N) linear traversal with constant space O(1).
