@@ -1,0 +1,59 @@
+Insert Interval
+
+Intuition:
+The given array of intervals is already sorted in ascending order by their start times. When we want to insert a new interval, we can divide the problem into three distinct phases:
+
+All intervals that come completely before the new interval (meaning their end time is less than the new interval's start time) do not overlap with the new interval and can be added directly to the result.
+
+All intervals that overlap with the new interval need to be merged into a single comprehensive interval. Two intervals overlap if they share at least one point, which means we merge them by taking the minimum of the start times and the maximum of the end times.
+
+All remaining intervals that come completely after the new interval can be added directly to the result.
+
+Approach:
+
+Initialize an index i = 0 and a size variable n = intervals.size(), along with a result vector to store the final output.
+
+First phase: Iterate through the intervals while i < n and the current interval's end time is less than the new interval's start time (intervals[i][1] < newInterval[0]). Push these intervals into the result vector and increment i.
+
+Second phase: While i < n and the current interval's start time is less than or equal to the new interval's end time (intervals[i][0] <= newInterval[1]), merge them. Update the new interval's start to the minimum of both starts and its end to the maximum of both ends. Increment i. After this loop, push the merged newInterval into the result vector.
+
+Third phase: Loop through any remaining intervals from index i to n - 1 and push them directly into the result vector.
+
+Return the result vector.
+
+Code and Algorithm:
+class Solution {
+public:
+vector<vector> insert(vector<vector>& intervals, vector& newInterval) {
+vector<vector> result;
+int i = 0, n = intervals.size();  
+
+    while (i < n && intervals[i][1] < newInterval[0]) {
+        result.push_back(intervals[i]);
+        i++;
+    }
+    
+    while (i < n && intervals[i][0] <= newInterval[1]) {
+        newInterval[0] = min(newInterval[0], intervals[i][0]);
+        newInterval[1] = max(newInterval[1], intervals[i][1]);
+        i++;
+    }
+    result.push_back(newInterval);
+    
+    while (i < n) {
+        result.push_back(intervals[i]);
+        i++;
+    }
+    
+    return result;
+}
+};
+
+Time Complexity:
+O(n), where n is the number of intervals in the given array. Each interval is visited at most once across the loops, leading to linear time complexity.
+
+Space Complexity:
+O(n) to store the elements in the result vector (excluding the space needed for the output, auxiliary space is O(1)).
+
+Why the optimal solution is better than the brute-force-approach:
+A brute-force approach might involve adding the new interval to the list, sorting all the intervals again, and then merging overlapping intervals in a separate pass. This would take O(n log n) time due to the sorting step. The optimal solution takes advantage of the fact that the original array is already sorted. By processing the intervals in a single linear scan (O(n) time), we avoid unnecessary sorting overhead and merge intervals on the fly, making it faster and more efficient.
