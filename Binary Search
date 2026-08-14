@@ -1,0 +1,43 @@
+Binary Search
+
+Intuition
+When searching for an element in a sorted array, instead of checking every single element sequentially, we can take advantage of the sorted order. By looking at the middle element, we can immediately determine whether the target must lie in the left half or the right half, eliminating half of the remaining elements with every single comparison.
+
+Approach
+Initialize two pointers, l at the start of the array (index 0) and r at the end of the array (index nums.size() - 1).
+Loop as long as l is less than or equal to r.
+Calculate the middle index m.
+Compare the element at index m with the target.
+If it matches the target, return index m.
+If the target is greater than the middle element, move the left pointer l to m + 1.
+If the target is smaller than the middle element, move the right pointer r to m - 1.
+If the loop finishes without finding the target, return -1.
+
+Code and Algorithm
+class Solution {
+public:
+int search(vector& nums, int target) {
+int l = 0;
+int r = nums.size() - 1;
+while (l <= r) {
+int m = l + (r - l) / 2;
+if (nums[m] == target) {
+return m;
+} else if (nums[m] < target) {
+l = m + 1;
+} else {
+r = m - 1;
+}
+}
+return -1;
+}
+};
+
+Time Complexity
+O(log n) because the search space is divided in half during each iteration of the loop.
+
+Space Complexity
+O(1) because only a constant amount of extra space is used for pointers and variables regardless of the input size.
+
+Why the optimal solution is better than the brute-force approach
+The brute-force approach involves a linear search where every element is checked one by one from start to end, resulting in an O(n) time complexity. In contrast, the optimal binary search approach reduces the search space exponentially by half at each step, yielding an O(log n) time complexity. This makes binary search significantly faster and more efficient, especially for large datasets.
