@@ -1,0 +1,41 @@
+Find Minimum in Rotated Sorted Array
+
+Intuition
+A sorted array is rotated, which means it is split into two sorted portions. The unique property of the rotated sorted array is that the minimum element is the only point where the array drops in value, which corresponds to the pivot point of rotation. If we compare the middle element with the rightmost element, we can determine which half of the array remains sorted and which half contains the inflection point (the minimum element). If the middle element is greater than the rightmost element, the minimum element must lie strictly to the right. Otherwise, the minimum element lies to the left or at the middle index itself.
+
+Approach
+Initialize two pointers, left at index 0 and right at the last index of the array. Run a binary search loop while left is less than right. Calculate the middle index as mid equals left plus (right minus left) divided by 2. If the element at nums[mid] is greater than nums[right], it means the minimum element is in the right half, so update left to mid plus 1. If nums[mid] is less than or equal to nums[right], the minimum element is in the left half including mid, so update right to mid. When the loop terminates, left and right will converge at the index of the minimum element, and we return nums[left].
+
+Code n Algo
+class Solution {
+public:
+int findMin(vector& nums) {
+int left = 0;
+int right = nums.size() - 1;
+
+```
+    while (left < right) {
+        int mid = left + (right - left) / 2;
+        
+        if (nums[mid] > nums[right]) {
+            left = mid + 1;
+        } else {
+            right = mid;
+        }
+    }
+    
+    return nums[left];
+}
+
+```
+
+};
+
+Time Complexity
+O(log n) because the search space is divided in half during each iteration of the binary search loop, where n is the number of elements in the array.
+
+Space Complexity
+O(1) because only a constant amount of extra memory is used for variables like left, right, and mid.
+
+Why the optimal solution is better than the brute-force approach
+The brute-force approach involves scanning through the entire array linearly to find the smallest element, which takes O(n) time. In contrast, the optimal binary search approach reduces the search space exponentially, achieving an O(log n) time complexity. For large arrays, O(log n) is drastically faster and efficiently satisfies the problem constraint.
