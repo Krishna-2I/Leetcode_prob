@@ -1,0 +1,50 @@
+Merge Intervals
+
+Intuition
+When we are given a collection of intervals, they can be scattered in any random order. If we sort all the intervals based on their starting times, any intervals that overlap will end up right next to each other. This allows us to process them sequentially in a single pass from left to right, maintaining a running merged interval as we go.
+
+Approach
+
+First, check if the input intervals array is empty; if it is, return an empty vector.
+
+Sort the intervals array in ascending order based on the start value of each interval using standard sorting.
+
+Create a result container named merged to store the final non-overlapping intervals.
+
+Loop through each interval in the sorted intervals list.
+
+If the merged list is empty, or if the end time of the last interval in merged is strictly less than the start time of the current interval, it means there is no overlap. Therefore, we simply push the current interval into the merged list.
+
+If an overlap does exist, we update the end time of the last interval in merged to be the maximum of its own end time and the current interval's end time.
+
+Finally, return the merged vector.
+
+Code and Algorithm
+class Solution {
+public:
+vector<vector> merge(vector<vector>& intervals) {
+if (intervals.empty()) return {};
+
+    sort(intervals.begin(), intervals.end());
+    
+    vector<vector<int>> merged;
+    for (const auto& interval : intervals) {
+        if (merged.empty() || merged.back()[1] < interval[0]) {
+            merged.push_back(interval);
+        } else {
+            merged.back()[1] = max(merged.back()[1], interval[1]);
+        }
+    }
+    
+    return merged;
+}
+};
+
+Time Complexity
+O(N log N) where N is the number of intervals. The time complexity is completely dominated by the sorting step. The subsequent linear scan through the intervals takes O(N) time.
+
+Space Complexity
+O(log N) to O(N) auxiliary space depending on the sorting algorithm's implementation stack space in C++, plus O(N) space to hold the output merged array in the worst-case scenario where no intervals overlap.
+
+Why the optimal solution is better than the brute-force approach
+In a brute-force approach, you would compare every single interval against every other interval to find and construct components or group overlapping pairs, which can lead to a time complexity of O(N squared) or worse. By sorting the array first, we impose a logical order that reduces the problem to a linear scan (O(N)), transforming an inefficient pairwise comparison into an optimal greedy single-pass strategy.
