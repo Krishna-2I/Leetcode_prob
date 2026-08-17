@@ -1,0 +1,56 @@
+Non-overlapping Intervals
+
+Intuition
+To find the minimum number of intervals to remove to make the rest non-overlapping, we can instead maximize the number of mutually non-overlapping intervals we keep. This is a classic greedy problem (similar to the Activity Selection Problem). To maximize the number of non-overlapping intervals we can keep, we should always greedily pick the interval that ends the earliest. By finishing as early as possible, we leave the maximum amount of remaining room for future intervals.
+
+Approach
+
+Handle the edge case where the intervals array is empty and return 0.
+
+Sort all the intervals in ascending order based on their end times.
+
+Keep track of the last end time, initialized to the end time of the first interval, and a counter ans (representing intervals to remove) initialized to 0.
+
+Iterate through the remaining intervals starting from the second one:
+
+If the current interval's start time is less than the last end time, it means there is an overlap. We must remove this interval, so we increment ans++.
+
+If there is no overlap (the current interval starts at or after the last end time), we can safely keep it and update our last end time to the current interval's end time.
+
+Return the total count ans.
+
+Code
+
+class Solution {
+public:
+int eraseOverlapIntervals(vector<vector>& a) {
+if (a.empty()) return 0;
+sort(a.begin(), a.end(), [](auto& x, auto& y) { return x[1] < y[1]; });
+int ans = 0, last = a[0][1];
+for (int i = 1; i < a.size(); ++i) {
+if (a[i][0] < last) ans++;
+else last = a[i][1];
+}
+return ans;
+}
+};
+
+Time Complexity
+
+Sorting the intervals based on their end times takes O(N log N), where N is the number of intervals.
+
+A single pass through the sorted intervals takes O(N).
+
+Overall Time Complexity: O(N log N).
+
+Space Complexity
+
+The space complexity depends on the sorting algorithm used by the standard library. For C++ std::sort, it typically takes O(log N) or O(N) auxiliary stack/memory space.
+
+Overall Space Complexity: O(log N) or O(N).
+
+Why the optimal solution is better than the brute-force approach
+
+Brute-force Approach: A brute-force solution would involve generating all possible subsets of intervals, checking each subset to see if they are non-overlapping, and finding the maximum size subset (or minimum removed). This would take exponential time, typically O(2^N), which is extremely inefficient and will time out for large constraints.
+
+Optimal Greedy Approach: By sorting by end times and making a greedy choice at each step, we reduce the problem to a single linear scan after sorting. This drops the time complexity from O(2^N) to O(N log N), allowing it to effortlessly handle large inputs within milliseconds.
