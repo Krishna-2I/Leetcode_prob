@@ -1,0 +1,84 @@
+ Wiggle Sort II
+
+Intuition
+
+The problem requires us to reorder an array nums such that nums[0] < nums[1] > nums[2] < nums[3]...
+
+A brute-force approach might involve sorting the array and interleaving the halves, but duplicates can cause adjacent elements to be equal (violating the strict inequality). To handle duplicates gracefully and achieve the optimal O(n) time complexity, we can use median finding combined with 3-way partitioning (Dutch National Flag algorithm).
+
+By finding the median element, we can partition the array into three logical sections: elements greater than the median, elements equal to the median, and elements less than the median. We then map these virtual indices using a clever indexing trick (often called virtual indexing or mapped index) represented as #define A(i) nums[(1 + 2 * (i)) % (n | 1)]. This maps the sorted positions into the wiggle-sort layout in-place, ensuring that identical elements (the median values) do not end up adjacent to each other.
+
+Approach
+
+Find the Median: Use C++'s std::nth_element to find the median value (m) of the array in average O(n) time.
+
+Virtual Indexing: Define a macro or inline function A(i) that maps a standard sequential index i to its corresponding wiggle-sorted position using the formula (1 + 2 * i) % (n | 1).
+
+3-Way Partitioning (Dutch National Flag):
+
+Initialize three pointers: i = 0 (for elements greater than the median), j = 0 (current element), and k = n - 1 (for elements less than the median).
+
+Traverse and compare the mapped element A(j) with the median m:
+
+If A(j) > m, swap it with A(i) and increment both i and j.
+
+If A(j) < m, swap it with A(k) and decrement k (leave j unchanged to evaluate the swapped element).
+
+If A(j) == m, simply increment j.
+
+Algorithm
+
+Find n = nums.size()
+
+Find the median using nth_element() at mid = nums.begin() + n / 2, let m = *mid
+
+Initialize pointers: i = 0, j = 0, k = n - 1
+
+While j <= k:
+a. Map current index using A(j)
+b. If A(j) > m: swap A(i) and A(j), increment i and j
+c. Else if A(j) < m: swap A(j) and A(k), decrement k
+d. Else: increment j
+
+Code
+
+class Solution {
+public:
+void wiggleSort(vector& nums) {
+int n = nums.size();
+auto mid = nums.begin() + n / 2;
+nth_element(nums.begin(), mid, nums.end());
+int m = *mid;
+
+    #define A(i) nums[(1 + 2 * (i)) % (n | 1)]
+
+    int i = 0, j = 0, k = n - 1;
+    while (j <= k) {
+        if (A(j) > m) {
+            swap(A(i++), A(j++));
+        } else if (A(j) < m) {
+            swap(A(j), A(k--));
+        } else {
+            j++;
+        }
+    }
+}
+};
+
+Time Complexity
+
+O(n) average time: Finding the median using std::nth_element takes linear time O(n) on average. The 3-way partitioning loop runs in a single pass of O(n) time.
+
+Overall Time Complexity: O(n)
+
+Space Complexity
+
+O(1) auxiliary space: The algorithm performs the reordering entirely in-place using virtual index mapping and constant extra pointer variables.
+
+Overall Space Complexity: O(1)
+
+Why the Optimal Solution is Better Than the Brute-Force Approach
+
+Brute-Force Approach: Sorting the entire array takes O(n log n) time. If you simply split the sorted array in half and interleave them, identical elements (duplicates) can end up next to each other, violating the strict < and > constraints. Fixing this requires extra temporary arrays or complex checks, increasing space complexity.
+
+Optimal Solution: Runs in optimal O(n) time and O(1) space by leveraging quickselect (nth_element) and virtual index mapping. It elegantly handles duplicate values around the median without requiring extra storage, ensuring elements are correctly interleaved to satisfy the strict wiggle sort conditions.
