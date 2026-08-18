@@ -1,0 +1,47 @@
+Problem Name: Single Number II
+
+Intuition
+Since every number appears three times except for one that appears once, tracking the count of set bits modulo 3 across all numbers allows us to isolate the unique number. Using two bitmask variables, we can simulate a base-3 (modulo 3) counter for every bit position simultaneously.
+
+Approach
+Use two integer variables, ones and twos, to act as a 2-bit counter for each bit position:
+
+ones holds bits that have appeared 1 time (modulo 3).
+
+twos holds bits that have appeared 2 times (modulo 3).
+When a bit appears a third time, both ones and twos are reset back to 0 for that bit position. At the end of the array, ones will hold the bits of the number that appeared only once.
+
+Algo
+
+Initialize two variables, ones = 0 and twos = 0.
+
+Iterate through each number x in the array nums.
+
+Update ones by toggling with x using XOR, then mask out bits present in twos: ones = (ones ^ x) & ~twos.
+
+Update twos by toggling with x using XOR, then mask out bits present in the updated ones: twos = (twos ^ x) & ~ones.
+
+After processing all numbers in the array, return ones.
+
+Code
+
+class Solution {
+public:
+int singleNumber(vector& nums) {
+int ones = 0, twos = 0;
+for (int x : nums) {
+ones = (ones ^ x) & ~twos;
+twos = (twos ^ x) & ~ones;
+}
+return ones;
+}
+};
+
+Time Complexity
+O(n): A single pass through the array of length n, where each iteration performs constant-time bitwise operations.
+
+Space Complexity
+O(1): Only two integer variables (ones and twos) are used, requiring constant extra memory regardless of the input size.
+
+Why the optimal solution is better than the brute-force approach
+A brute-force approach (like using a hash map to count frequencies or sorting the array) takes either O(n) extra space or O(n log n) time. The bitwise counter approach strictly satisfies the linear O(n) runtime and O(1) constant extra space constraints without allocating heap memory.
