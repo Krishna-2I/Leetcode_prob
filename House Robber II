@@ -1,0 +1,65 @@
+House Robber II
+
+Intuition
+Because the houses are arranged in a circle, robbing the first house means you cannot rob the last house, and vice versa. This reduces the circular problem into two linear House Robber subproblems: one considering houses from the first to the second-to-last house (index 0 to n-2), and the other considering houses from the second to the last house (index 1 to n-1). The maximum of these two scenarios is the final answer.
+
+Approach
+Use the linear House Robber dynamic programming logic as a helper function across two distinct ranges:
+
+Handle the edge case where the array has only 1 house by directly returning its value.
+
+Helper function takes a range [l, r] and computes the maximum robbery amount using two variables (a and b) for constant space.
+
+Run the helper for range [0, n - 2] (excluding the last house) and range [1, n - 1] (excluding the first house).
+
+Return the maximum result between the two runs.
+
+Algo
+
+Check if the array length n is 1. If so, return nums[0].
+
+Define a helper function that takes nums and boundaries l and r:
+a. Initialize a = 0 and b = 0.
+b. Loop index i from l to r:
+
+Compute c = max(b, a + nums[i]).
+
+Set a = b.
+
+Set b = c.
+c. Return b.
+
+Compute result1 = helper(nums, 0, n - 2).
+
+Compute result2 = helper(nums, 1, n - 1).
+
+Return max(result1, result2).
+
+Code
+
+class Solution {
+int helper(vector& nums, int l, int r) {
+int a = 0, b = 0;
+for (int i = l; i <= r; ++i) {
+int c = max(b, a + nums[i]);
+a = b;
+b = c;
+}
+return b;
+}
+public:
+int rob(vector& nums) {
+int n = nums.size();
+if (n == 1) return nums[0];
+return max(helper(nums, 0, n - 2), helper(nums, 1, n - 1));
+}
+};
+
+Time Complexity
+O(n): The helper function runs twice over subarrays of length n - 1, resulting in linear O(n) total runtime with O(1) operations per iteration.
+
+Space Complexity
+O(1): Only a few primitive integer variables (a, b, c, n) are used, requiring no dynamic heap memory or extra array allocations.
+
+Why the optimal solution is better than the brute-force approach
+A brute-force recursive backtracking solution would explore all possible non-adjacent combinations around the circle, yielding an exponential O(2^n) time complexity that causes Time Limit Exceeded (TLE) errors. The DP approach breaks the circular dependency into two linear passes, achieving an optimal O(n) runtime and O(1) auxiliary space.
