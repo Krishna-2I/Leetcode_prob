@@ -1,0 +1,51 @@
+House Robber
+
+Intuition
+At each house, you have two choices: rob the current house (which means you cannot rob the immediately preceding house and must add its loot to the maximum profit from two houses prior) or skip the current house (which leaves your profit equal to the maximum profit from the preceding house). The optimal decision at any step depends strictly on the best outcomes of the previous two houses.
+
+Approach
+Use dynamic programming with constant space optimization:
+
+Maintain two variables: a (max loot up to two houses prior) and b (max loot up to the previous house).
+
+For each house with value x, calculate the maximum possible loot up to this house: c = max(b, a + x).
+
+Slide the window forward: update a to b, and b to c.
+
+After processing all houses, b will hold the maximum total money that can be robbed.
+
+Algo
+
+Initialize two variables, a = 0 and b = 0.
+
+Loop through each value x in the array nums.
+
+Compute the current best loot: c = max(b, a + x).
+
+Update previous values: a = b, then b = c.
+
+After the loop completes, return b.
+
+Code
+
+class Solution {
+public:
+int rob(vector& nums) {
+int a = 0, b = 0;
+for (int x : nums) {
+int c = max(b, a + x);
+a = b;
+b = c;
+}
+return b;
+}
+};
+
+Time Complexity
+O(n): A single linear pass through the array of length n, where each step executes constant-time arithmetic and comparison operations.
+
+Space Complexity
+O(1): Only three primitive integer variables (a, b, c) are maintained, using constant auxiliary memory regardless of input size.
+
+Why the optimal solution is better than the brute-force approach
+A brute-force recursive solution generates all subsets of non-adjacent houses, leading to an exponential O(2^n) time complexity that causes a Time Limit Exceeded (TLE) error on larger arrays. The optimal dynamic programming solution reduces this to linear O(n) time by solving each subproblem once, while eliminating the O(n) memory overhead of an array table down to O(1) space.
