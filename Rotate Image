@@ -1,0 +1,54 @@
+Rotate Image
+
+Intuition
+Rotating an n x n matrix 90 degrees clockwise can be broken down into two simple geometric transformations: first transposing the matrix (swapping elements across the main diagonal so rows become columns), and then reversing each individual row horizontally. This transforms cell (i, j) into (j, n - 1 - i) entirely in-place.
+
+Approach
+
+Transpose the matrix: Iterate over the upper triangle of the matrix (where row index i ranges from 0 to n-1 and column index j ranges from i+1 to n-1) and swap matrix[i][j] with matrix[j][i].
+
+Reverse rows: Iterate through each row of the transposed matrix and reverse its elements in-place.
+
+Algo
+
+Let n be the number of rows/columns in matrix m.
+
+Transpose the matrix:
+
+Loop i from 0 to n - 1.
+
+Loop j from i + 1 to n - 1.
+
+Swap m[i][j] with m[j][i].
+
+Reverse each row:
+
+Loop i from 0 to n - 1.
+
+Reverse the elements of row m[i].
+
+Code
+
+class Solution {
+public:
+void rotate(vector<vector>& m) {
+int n = m.size();
+for (int i = 0; i < n; ++i) {
+for (int j = i + 1; j < n; ++j) {
+swap(m[i][j], m[j][i]);
+}
+}
+for (int i = 0; i < n; ++i) {
+reverse(m[i].begin(), m[i].end());
+}
+}
+};
+
+Time Complexity
+O(n^2): Transposing the matrix processes n*(n-1)/2 elements, and reversing all n rows of length n takes n * (n/2) swaps, resulting in an overall time complexity proportional to the total number of cells in the matrix.
+
+Space Complexity
+O(1): All operations are performed directly in-place without allocating any extra auxiliary matrix or dynamic heap memory.
+
+Why the optimal solution is better than the brute-force approach
+A brute-force approach copies elements into a new n x n matrix at positions new_matrix[j][n - 1 - i], requiring O(n^2) auxiliary space and violating the strict in-place constraint. The transpose-and-reverse optimal approach modifies the matrix in-place with O(1) extra space while keeping the exact same O(n^2) time complexity.
