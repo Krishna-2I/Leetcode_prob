@@ -1,0 +1,62 @@
+Problem Name: Subsets
+
+Intuition
+A power set of a set of size n contains 2^n subsets because every element can either be included or excluded. We can systematically generate every valid subset by building paths incrementally using backtracking, saving the current state at every decision point and exploring all remaining elements.
+
+Approach
+Use depth-first search (DFS) with backtracking:
+
+* Start with an empty subset path.
+* At each recursive step, add a copy of the current path to the result list ans because every prefix forms a valid subset.
+* Iterate through the remaining available numbers starting from index start to avoid duplicate combinations and enforce order.
+* Include the current element in path, recurse for the next index (i + 1), and then pop the element to backtrack and explore other branches.
+
+Algo
+
+1. Define a helper function backtrack(start, nums, path, ans):
+a. Append the current path to ans.
+b. Loop index i from start to nums.size() - 1:
+* Add nums[i] to path.
+* Recursively call backtrack(i + 1, nums, path, ans).
+* Remove the last element from path (backtrack).
+
+
+2. In the main function subsets:
+a. Initialize an empty 2D array ans and a 1D array path.
+b. Call backtrack(0, nums, path, ans).
+c. Return ans.
+
+Code
+
+class Solution {
+public:
+void backtrack(int start, vector& nums, vector& path,
+vector<vector>& ans) {
+ans.push_back(path);
+for (int i = start; i < nums.size(); ++i) {
+path.push_back(nums[i]);
+backtrack(i + 1, nums, path, ans);
+path.pop_back();
+}
+}
+
+```
+vector<vector<int>> subsets(vector<int>& nums) {
+    vector<vector<int>> ans;
+    vector<int> path;
+    backtrack(0, nums, path, ans);
+    return ans;
+}
+
+```
+
+};
+
+Time Complexity
+O(n * 2^n): There are 2^n total subsets generated, and copying each subset of average length O(n) into the answer list takes O(n) time.
+
+Space Complexity
+O(n): The recursion call stack and the path buffer require up to O(n) auxiliary space (excluding the output storage of 2^n subsets).
+
+Why the optimal solution is better than the brute-force approach
+A naive generate-and-filter brute-force approach might generate duplicate permutations or non-unique subsets and require an expensive hash set lookup to filter out unique sets, costing extra time and memory. The backtracking approach generates each of the 2^n unique subsets exactly once without redundant branches, checking, or set-lookup overhead.
