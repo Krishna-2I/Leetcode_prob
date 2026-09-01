@@ -1,0 +1,34 @@
+Sort Colors
+
+Intuition
+Since the array only contains three distinct values (0, 1, and 2 representing red, white, and blue), we can partition the array into three contiguous segments using the Dutch National Flag algorithm. By maintaining three pointers, we can place all 0s in the left region, all 2s in the right region, and let all 1s naturally remain in the middle region in a single pass.
+
+Approach
+Initialize three pointers: l = 0 (boundary for 0s), m = 0 (current element being inspected), and r = nums.size() - 1 (boundary for 2s).
+Loop while m is less than or equal to r.
+If nums[m] is 0, swap nums[l] with nums[m], then increment both l and m (since the swapped element from the left is guaranteed to be 1).
+If nums[m] is 1, it is already in the correct relative section, so just increment m.
+If nums[m] is 2, swap nums[m] with nums[r], then decrement r (do not increment m yet, as the newly swapped element at m needs to be evaluated).
+When the loop finishes, the array is sorted in-place.
+
+Code and Algorithm
+class Solution {
+public:
+void sortColors(vector& nums) {
+int l = 0, m = 0, r = nums.size() - 1;
+while (m <= r) {
+if (nums[m] == 0) swap(nums[l++], nums[m++]);
+else if (nums[m] == 1) m++;
+else swap(nums[m], nums[r--]);
+}
+}
+};
+
+Time Complexity
+O(n), where n is the number of elements in nums, because each element is inspected and partitioned in a single pass.
+
+Space Complexity
+O(1) because the sorting is done in-place using only three pointer variables.
+
+Why the optimal solution is better than the brute-force approach
+A standard sorting algorithm (like QuickSort or MergeSort) runs in O(n log n) time. A two-pass counting sort counts occurrences of 0, 1, and 2 in the first pass and overwrites the array in the second pass. The optimal Dutch National Flag algorithm sorts the entire array in a single O(n) pass in-place without any extra space or second pass overhead.
