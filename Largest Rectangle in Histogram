@@ -1,0 +1,45 @@
+Largest Rectangle in Histogram
+
+Intuition
+To find the largest rectangular area, every bar can potentially be the shortest bar (limiting height) of a maximal rectangle. Instead of scanning all possible left and right boundaries for every bar, we can maintain a monotonic increasing stack of bar heights and their starting indices. When a shorter bar is encountered, it means the taller bars preceding it cannot extend any further to the right, allowing us to pop them, calculate their maximum formed area, and extend the current bar's left boundary backward to where the popped bars started.
+
+Approach
+Append a dummy height of 0 to the end of the array to guarantee all elements remaining in the stack will be processed and popped at the end.
+Maintain a monotonic stack of pairs (start_index, height) to store heights in non-decreasing order.
+Initialize the maximum area answer to 0.
+Iterate through each bar index i from 0 to the size of the array.
+Set a variable s equal to i to represent the start index of the current bar.
+While the stack is not empty and the height at the top of the stack is greater than the current bar's height, pop the top element (j, ht), update the answer with the maximum of itself and ht * (i - j), and update s to j.
+Push the pair (s, current height) onto the stack.
+Return the maximum area answer.
+
+Code and Algorithm
+class Solution {
+public:
+    int largestRectangleArea(vector<int>& h) {
+        vector<pair<int, int>> st;
+        int ans = 0;
+        h.push_back(0);
+
+        for (int i = 0; i < h.size(); ++i) {
+            int s = i;
+            while (!st.empty() && st.back().second > h[i]) {
+                auto [j, ht] = st.back();
+                st.pop_back();
+                ans = max(ans, ht * (i - j));
+                s = j;
+            }
+            st.push_back({s, h[i]});
+        }
+        return ans;
+    }
+};
+
+Time Complexity
+O(n) because each bar is pushed onto and popped from the monotonic stack at most once across the entire iteration.
+
+Space Complexity
+O(n) because extra space is used by the stack to store at most n + 1 elements in the worst case.
+
+Why the optimal solution is better than the brute-force approach
+The brute-force approach evaluates every pair of bars to find the minimum height between them or expands outward from each bar to find its left and right boundaries, resulting in an O(n^2) time complexity. In contrast, the optimal monotonic stack approach processes boundaries in a single linear pass, reducing the time complexity to O(n) and preventing time limit exceeded errors on large inputs.
