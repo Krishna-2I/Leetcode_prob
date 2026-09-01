@@ -1,0 +1,45 @@
+Next Greater Element I
+
+Intuition
+To find the next greater element for each number in nums1 within nums2, we can precompute the next greater element for all elements in nums2. A monotonic decreasing stack is ideal for this because it keeps track of elements waiting for their next greater value. As we iterate through nums2, any incoming element that is larger than the elements currently on top of the stack acts as their next greater element. Storing these pairs in a hash map allows us to quickly look up the answers for nums1 in constant time.
+
+Approach
+Initialize a stack to keep track of elements whose next greater element has not yet been found, and a hash map to store each number and its corresponding next greater element.
+Iterate through each number x in nums2.
+While the stack is not empty and the current number x is greater than the element at the top of the stack, record x as the next greater element for st.top() in the hash map, then pop that element from the stack.
+Push the current element x onto the stack.
+Create a result vector ans.
+Iterate through each element x in nums1, check the hash map for its next greater element, and push the mapped value (or -1 if it is not present in the map) into ans.
+Return the result vector ans.
+
+Code and Algorithm
+class Solution {
+public:
+vector nextGreaterElement(vector& nums1, vector& nums2) {
+unordered_map<int, int> mp;
+stack st;
+
+    for (int x : nums2) {
+        while (!st.empty() && st.top() < x) {
+            mp[st.top()] = x;
+            st.pop();
+        }
+        st.push(x);
+    }
+
+    vector<int> ans;
+    for (int x : nums1) {
+        ans.push_back(mp.count(x) ? mp[x] : -1);
+    }
+    return ans;
+}
+};
+
+Time Complexity
+O(n + m), where n is the size of nums2 and m is the size of nums1. Each element in nums2 is pushed and popped from the stack at most once, and querying each element in nums1 takes O(1) average time using the hash map.
+
+Space Complexity
+O(n) to store the elements of nums2 in the stack and hash map.
+
+Why the optimal solution is better than the brute-force approach
+The brute-force approach requires searching for each element of nums1 in nums2 and then scanning to the right to find the next greater element, resulting in an O(m * n) time complexity. The optimal stack and hash map approach processes nums2 in a single linear pass and uses O(1) lookups for nums1, reducing the overall time complexity to O(n + m), which performs significantly faster on larger arrays.
