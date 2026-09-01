@@ -1,0 +1,59 @@
+Sum of Subarray Minimums
+
+Intuition
+Instead of generating every possible subarray and finding its minimum, we can determine the contribution of each element arr[i] as the minimum across all subarrays. An element arr[i] acts as the minimum for any subarray that starts anywhere in its left valid boundary and ends anywhere in its right valid boundary. Using monotonic stacks, we can count how many contiguous elements to the left (strictly greater) and to the right (greater than or equal) rely on arr[i] as their minimum, preventing duplicate counting of identical elements.
+
+Approach
+Initialize two arrays, l and r of size n, to store the number of valid subarray boundaries extending to the left and right for each index.
+Use a monotonic stack s1 storing pairs of (value, count) to traverse from left to right: for each element, pop elements strictly greater than arr[i], accumulate their counts into cnt, push {arr[i], cnt} to s1, and set l[i] = cnt.
+Use a monotonic stack s2 storing pairs of (value, count) to traverse from right to left: for each element, pop elements greater than or equal to arr[i], accumulate their counts into cnt, push {arr[i], cnt} to s2, and set r[i] = cnt.
+Iterate through the array and calculate the total contribution of each element as (arr[i] * l[i] * r[i]) % (10^9 + 7).
+Sum these contributions modulo 10^9 + 7 and return the result.
+
+Code and Algorithm
+class Solution {
+public:
+int sumSubarrayMins(vector& arr) {
+int n = arr.size();
+int mod = 1e9 + 7;
+vector l(n), r(n);
+stack<pair<int, int>> s1, s2;
+
+    for (int i = 0; i < n; ++i) {
+        int cnt = 1;
+        while (!s1.empty() && s1.top().first > arr[i]) {
+            cnt += s1.top().second;
+            s1.pop();
+        }
+        s1.push({arr[i], cnt});
+        l[i] = cnt;
+    }
+
+    for (int i = n - 1; i >= 0; --i) {
+        int cnt = 1;
+        while (!s2.empty() && s2.top().first >= arr[i]) {
+            cnt += s2.top().second;
+            s2.pop();
+        }
+        s2.push({arr[i], cnt});
+        r[i] = cnt;
+    }
+
+    long long total = 0;
+    for (int i = 0; i < n; ++i) {
+        long long prod = (long long)arr[i] * l[i] % mod;
+        prod = (prod * r[i]) % mod;
+        total = (total + prod) % mod;
+    }
+    return total;
+}
+};
+
+Time Complexity
+O(n), where n is the number of elements in the array. Each element is pushed and popped from stacks s1 and s2 at most once across the linear scans.
+
+Space Complexity
+O(n) to store the monotonic stacks and the auxiliary arrays l and r.
+
+Why the optimal solution is better than the brute-force approach
+The brute-force approach generates all O(n^2) subarrays and computes the minimum for each, which takes O(n^3) naively or O(n^2) with running minimums, causing a Time Limit Exceeded on large inputs (n up to 30,000). The monotonic stack approach shifts the perspective to element contributions, solving the problem in linear O(n) time and easily passing within time limits.
