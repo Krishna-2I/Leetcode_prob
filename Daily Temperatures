@@ -1,0 +1,44 @@
+Daily Temperatures
+
+Intuition
+To determine the number of days until a warmer temperature occurs, we need to find the next greater element for each day. Instead of checking forward through the array for every single day, we can use a monotonic decreasing stack to store the indices of days that are waiting for a warmer day. As soon as a warmer temperature appears at the current day, it resolves the waiting days at the top of the stack, allowing us to compute the day difference immediately.
+
+Approach
+Initialize an answer array of size n filled with 0s to handle days that never see a warmer temperature.
+Initialize an empty stack to store indices of previous days with decreasing temperatures.
+Iterate through the array from index i = 0 to n - 1.
+While the stack is not empty and the current temperature at index i is strictly greater than the temperature at the index stored at the top of the stack:
+Pop the top index from the stack and store it in prevIndex.
+Calculate the number of days waited as i - prevIndex and store it in answer[prevIndex].
+Push the current index i onto the stack.
+Return the answer array.
+
+Code and Algorithm
+class Solution {
+public:
+vector dailyTemperatures(vector& temperatures) {
+int n = temperatures.size();
+vector answer(n, 0);
+stack st;
+
+    for (int i = 0; i < n; ++i) {
+        while (!st.empty() && temperatures[i] > temperatures[st.top()]) {
+            int prevIndex = st.top();
+            st.pop();
+            answer[prevIndex] = i - prevIndex;
+        }
+        st.push(i);
+    }
+
+    return answer;
+}
+};
+
+Time Complexity
+O(n) because each index is pushed onto and popped from the stack at most once during the single traversal of the array.
+
+Space Complexity
+O(n) because extra space is used by the stack to store up to n indices in the worst-case scenario where temperatures are in non-increasing order.
+
+Why the optimal solution is better than the brute-force approach
+The brute-force approach uses nested loops to search forward from each day until a warmer temperature is found, leading to an O(n^2) time complexity in the worst case. In contrast, the optimal monotonic stack approach processes each day in amortized O(1) time per element, achieving an overall O(n) linear time complexity and avoiding time limit exceeded errors on large arrays.
