@@ -1,0 +1,51 @@
+Spiral Matrix
+
+Intuition
+To traverse an m x n matrix in spiral order, we can simulate walking along its outer boundary layer by layer in a clockwise direction: right, down, left, and up. By maintaining four boundaries (top, bot, left, and right), we can process the outermost perimeter and shrink the boundaries inward until all elements have been visited.
+
+Approach
+Initialize four boundary pointers: top = 0, bot = matrix.size() - 1, left = 0, and right = matrix[0].size() - 1.
+Loop while top <= bot and left <= right.
+Traverse from left to right along the top row, add the elements to the result vector ans, and increment top.
+Traverse from top to bot along the right column, add the elements to ans, and decrement right.
+Check if top <= bot still holds; if so, traverse from right to left along the bot row, add the elements to ans, and decrement bot.
+Check if left <= right still holds; if so, traverse from bot to top along the left column, add the elements to ans, and increment left.
+Return the result vector ans once all boundaries cross.
+
+Code and Algorithm
+class Solution {
+public:
+vector spiralOrder(vector<vector>& matrix) {
+vector ans;
+int top = 0, bot = matrix.size() - 1;
+int left = 0, right = matrix[0].size() - 1;  
+
+    while (top <= bot && left <= right) {
+        for (int j = left; j <= right; ++j) ans.push_back(matrix[top][j]);
+        top++;
+
+        for (int i = top; i <= bot; ++i) ans.push_back(matrix[i][right]);
+        right--;
+
+        if (top <= bot) {
+            for (int j = right; j >= left; --j) ans.push_back(matrix[bot][j]);
+            bot--;
+        }
+
+        if (left <= right) {
+            for (int i = bot; i >= top; --i) ans.push_back(matrix[i][left]);
+            left++;
+        }
+    }
+    return ans;
+}
+};
+
+Time Complexity
+O(m * n), where m is the number of rows and n is the number of columns, because every element in the matrix is visited exactly once.
+
+Space Complexity
+O(1) auxiliary space (excluding the output array ans) as only a few boundary pointer variables are used.
+
+Why the optimal solution is better than the brute-force approach
+A brute-force or visited-matrix approach often uses an additional O(m * n) boolean array to mark visited cells and dynamic direction vectors with collision checks. The boundary-shrinking approach manages the traversal boundaries directly in-place, eliminating the need for extra auxiliary memory, reducing branching overhead, and cleanly preventing out-of-bounds errors.
